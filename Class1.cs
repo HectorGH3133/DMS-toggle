@@ -1,8 +1,10 @@
 ﻿using System;
 using Exiled.API.Features;
 using Exiled.Events.EventArgs.Warhead;
+using Exiled.Permissions.Extensions;
 using Exiled.Events.EventArgs.Server;
 using CommandSystem;
+using RemoteAdmin;
 
 namespace DMS_toggle
 {
@@ -12,7 +14,7 @@ namespace DMS_toggle
 
         public override string Name => "DMS-toggle";
         public override string Author => "HectorGH";
-        public override Version Version => new Version(1, 1, 0);
+        public override Version Version => new Version(1, 2, 0);
         public override Version RequiredExiledVersion => new Version(9, 1, 1);
 
         private bool isWarheadDisabledThisRound;
@@ -67,6 +69,17 @@ namespace DMS_toggle
 
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
+            if (!(sender is PlayerCommandSender playerSender))
+            {
+                response = "This command can only be executed by a player.";
+                return false;
+            }
+
+            if (!sender.CheckPermission("dms.toggle"))
+            {
+                response = "you don't have perms to execute the command.";
+                return false;
+            }
 
             if (StopWarheadPlugin.Instance == null)
             {
